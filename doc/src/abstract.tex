@@ -1,0 +1,12 @@
+% vim: set tw=78 sts=2 sw=2 ts=8 aw et ai:
+There are several layers of analysis and isolation in the Android application
+environment, all develope with the explicit purpose of ensuring that the
+features of smartphones do not expose personal user information to malicious
+third parties. While the current set of barriers covers many attack vectors,
+the solutions are limited if the malware is delivered to the victim device as
+a seemingly inoffensive file only to be transformed using cryptographic
+primitives into a malicious application package. Since the
+transformation is done on the victim device, most safeguards are bypassed. We
+propose a system that detects tentative attacks which use the above mentioned
+approach by instrumenting the cryptographic primitives in order to
+detect if both input and output are valid files.
