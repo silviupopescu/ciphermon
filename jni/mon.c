@@ -37,6 +37,9 @@
         fprintf(fp, __VA_ARGS__);\
         fclose(fp);}}
 
+static char apk_signature[4] = {0x50, 0x4B, 0x03, 0x04};
+static char png_signature[8] = {0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};
+
 static struct hook_t eph;
 static struct dexstuff_t d;
 
@@ -70,19 +73,37 @@ static void* cp_dofinal(JNIEnv *env, jobject obj, jbyteArray ba)
 	jbyteArray res;
 	jvalue args[1];
 	args[0].l = ba;
-	log("before dalvik_prepare\n");
+	
 	dalvik_prepare(&d, &cp, env);
 	res = (*env)->CallObjectMethodA(env, obj, cp.mid, args);
-	log("success calling : %s\n", cp.method_name)
 	dalvik_postcall(&d, &cp);
-	log("after dalvik_postcall\n");
+
+	jboolean isCopy;
+	jsize inSize = 0, outSize = 0;
+	jbyte *inBytes = NULL, *outBytes = NULL;
+	
+	inSize = (*env)->GetArrayLength(env, ba);
+	inBytes = (*env)->GetByteArrayElements(env, ba, &isCopy);
+	if (inBytes == NULL)
+		log("Failed to retrieve input bytes.\n");
+
+	outSize = (*env)->GetArrayLength(env, res);
+	outBytes = (*env)->GetByteArrayElements(env, res, &isCopy);
+	if (outBytes == NULL)
+		log("Failed to retrieve output bytes.\n");
+
+	if (memmem(inBytes, inSize, png_signature, 8) &&
+	    memmem(outBytes, outSize, apk_signature, 4))
+		log("Suspicious decryption operation.\n");
+
+	(*env)->ReleaseByteArrayElements(env, ba, inBytes, 0);
+	(*env)->ReleaseByteArrayElements(env, res, outBytes, 0);
+
 	return (void*)res;
 }
 
 void do_patch()
 {
-	log("do_patch()\n")
-
 	dalvik_hook_setup(&cp, "Ljavax/crypto/Cipher;",  "doFinal",  "([B)[B", 2, cp_dofinal);
 	dalvik_hook(&d, &cp);
 }
@@ -99,9 +120,6 @@ static int my_epoll_wait(int epfd, struct epoll_event *events, int maxevents, in
 	// insert hooks
 	do_patch();
 	
-	// call dump class (demo)
-	dalvik_dump_class(&d, "Ljavax/crypto/Cipher;");
-        
 	// call original function
 	int res = orig_epoll_wait(epfd, events, maxevents, timeout);    
 	return res;
@@ -112,12 +130,10 @@ void __attribute__ ((constructor)) my_init(void);
 
 void my_init(void)
 {
-	log("libciphermon: started\n")
- 
- 	// set to 1 to turn on, this will be noisy
+	// set to 1 to turn on, this will be noisy
 	debug = 0;
 
- 	// set log function for  libbase (very important!)
+	// set log function for  libbase (very important!)
 	set_logfunction(my_log2);
 	// set log function for libdalvikhook (very important!)
 	dalvikhook_set_logfunction(my_log2);
