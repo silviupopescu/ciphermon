@@ -25,7 +25,8 @@
 %%                    bare_conf.tex, bare_jrnl.tex, bare_jrnl_compsoc.tex
 %%*************************************************************************
 
-\documentclass[10pt, conference, compsocconf]{IEEEtran}
+\documentclass{llncs}
+%\documentclass[10pt, conference, compsocconf]{IEEEtran}
 
 \usepackage{ucs}
 \usepackage[utf8x]{inputenc}
@@ -52,12 +53,18 @@
 
 \title{Detection of Encrypted Android Malware Using Dalvik Hooks}
 
-\author{\IEEEauthorblockN{Ionuț-Mihăiță Pleșea, Silviu-Mihai Popescu}
-\IEEEauthorblockA{Computer Science and Engineering Department\\
+%\author{\IEEEauthorblockN{Ionuț-Mihăiță Pleșea, Silviu-Mihai Popescu}
+%\IEEEauthorblockA{Computer Science and Engineering Department\\
+%University POLITEHNICA of Bucharest\\
+%Bucharest, Romania\\
+%\emph{\{ionut.plesea, silviu.popescu\}@cti.pub.ro}}
+%}
+
+\author{Ionuț-Mihăiță Pleșea, Silviu-Mihai Popescu}
+\institute{Computer Science and Engineering Department\\
 University POLITEHNICA of Bucharest\\
 Bucharest, Romania\\
-\emph{\{ionut.plesea, silviu.popescu\}@cti.pub.ro}}
-}
+\email{\{ionut.plesea, silviu.popescu\}@cti.pub.ro}}
 
 % make the title area
 \maketitle
@@ -67,14 +74,16 @@ Bucharest, Romania\\
   \input{src/abstract}
 \end{abstract}
 
-\begin{IEEEkeywords}
-Android, Dalvik, cryptography, malware, method hooking, AngeCryption,
-instrumentation
-\end{IEEEkeywords}
+%\begin{IEEEkeywords}
+%Android, Dalvik, cryptography, malware, method hooking, AngeCryption,
+%instrumentation
+%\end{IEEEkeywords}
+\keywords{Android, Dalvik, cryptography, malware, method hooking, AngeCryption,
+instrumentation}
 
 % For peerreview papers, this IEEEtran command inserts a page break and
 % creates the second title. It will be ignored for other modes.
-\IEEEpeerreviewmaketitle
+%\IEEEpeerreviewmaketitle
 
 \section{Introduction}
 \label{sec:intro}
