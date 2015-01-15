@@ -93,8 +93,10 @@ static void* cp_dofinal(JNIEnv *env, jobject obj, jbyteArray ba)
 		log("Failed to retrieve output bytes.\n");
 
 	if (memmem(inBytes, inSize, png_signature, 8) &&
-	    memmem(outBytes, outSize, apk_signature, 4))
+	    memmem(outBytes, outSize, apk_signature, 4)) {
 		log("Suspicious decryption operation.\n");
+		exit(1);
+	}
 
 	(*env)->ReleaseByteArrayElements(env, ba, inBytes, 0);
 	(*env)->ReleaseByteArrayElements(env, res, outBytes, 0);
