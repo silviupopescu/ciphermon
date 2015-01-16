@@ -4,3 +4,8 @@
 *.blg 
 *.bbl 
 *.out 
+doc/report.aux
+doc/report.bbl
+doc/report.blg
+doc/report.out
+doc/report.synctex.gz
