@@ -9,3 +9,28 @@ hooking.
 We have looked at the demonstrative application that researchers have
 previously\cite{hiding-apk} developed in order to highlight encrypted malware.
 While our approach is extensible, we have targeted this specific sample.
+
+\subsection{Tools and Constraints}
+
+The demonstrative application that highlights encrypted malware can be found 
+on Github under the name
+ \emph{angecrypt}\footnote{\url{https://github.com/cryptax/angeapk}}. 
+
+We wrapped our solution around it so when we designed our hook we specifically 
+targeted a function called \emph{doFinal()} \footnote{\url{ 
+http://developer.android.com/reference/javax/crypto/Cipher.html\#doFinal()}}
+by taking its input and output and comparing them to signatures of known 
+file formats (in this particular demonstrative application, the input was a PNG
+file and the output a valid APK file). 
+
+We used the Android SDK\footnote{\url{https://developer.android.com/sdk/index.html\#Other}}
+to build the Bootup Receiver, the New Application Receiver 
+and the Main Application modules, and relied on the Android NDK\footnote{\url{https://developer.android.com/tools/sdk/ndk/index.html\#Downloads}}
+when tackling the Hook Injector and the Hook modules.
+
+One of the biggest constrain that we had was the fact that we used an 
+emulator instead of a rooted Android phone due to financial limitations 
+(warranty voiding due to rooting). Because of this we were unable to fully
+ automate the Hook Injector and the hijacking of the above specified 
+method had to be done manually.
+

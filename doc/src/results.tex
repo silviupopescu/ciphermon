@@ -1,3 +1,86 @@
 % vim: set tw=78 sts=2 sw=2 ts=8 aw et ai:
+The main goal, i.e. detecting malicious action being carried out by 
+a suspiciuos application (namely angecrypt), of our PoC (Proof-of-Concept)
+environment was achieved. We will further expand the process through
+ which our result can be reproduced.
 
-TODO
+\subsection{Setup Tools and Projects}
+In order to reproduce our result, a rooted phone is needed or at least an 
+emulator that has superuser access. In our experiments, we resorted to 
+using an emulator with Android 4.4.2 and API level 19 that was emulating 
+an ARMv7 architecture. It is considered implicit the availability of an 
+Android SDK as well as an Android NDK.
+
+One would also need the sources of \emph{ADBI}\footnote{\url{https://github.com/crmulliner/adbi}}
+and \emph{DDI}\footnote{\url{https://github.com/crmulliner/ddi}} 
+projects developed by \cite{ddi}. In order to use our hook instead of the 
+examples provided in DDI, our project\footnote{\url{https://github.com/silviupopescu/ciphermon/blob/master/jni/mon.c}} sources have to be dumped in the ddi/examples folder.
+
+Last but not least the suspicious application is required. That can be 
+found on Github as well under the name emph{angeapk}
+\footnote{\url{https://github.com/cryptax/angeapk/tree/master/wrapping-apk/src/com/fortiguard/poc/angecrypt}}
+
+\subsection{PoC Reproduction}
+
+The suspiciuos APK can be found in the Github repository mentioned above. 
+The \emph{adb} tool can be used to install the app on the phone/emulator.
+Assuming your are in the angeapk folder:
+\begin{verbatim}
+adb install PocActivity-debug.apk
+\end{verbatim}
+will install the APK.
+
+We will now compile binaries that support the hooking platform. We 
+need to be in the ADBI folder.
+\begin{verbatim}
+cd adbi/hijack/jni
+ndk-build
+adb push ../libs/armeabi/hijack /data/local/tmp/
+cd ../..
+cd instruments/base/jni
+ndk-build
+cd ../../../..
+\end{verbatim}
+Next, we will compile the libraries needed for the dalvik machine. We 
+need to be in the DDI folder.
+\begin{verbatim}
+cd ddi/dalvikhook/jni/libs
+adb pull /system/lib/libdl.so
+adb pull /system/lib/libdvm.so
+cd ../
+ndk-build
+cd ../../..
+\end{verbatim}
+
+Before compiling the libraries needed for the hook, make sure there is 
+a folder called ciphermon in ddi/examples that contains the jni folder 
+with our custom hook.
+
+\begin{verbatim}
+cd ddi/examples/ciphermon/jni
+ndk-build
+\end{verbatim}
+
+A library called \emph{libciphermon.so} should be available now. We 
+just push it on the phone
+\begin{verbatim}
+adb push ../libs/armeabi/libciphermon.so /data/local/tmp
+\end{verbatim}
+and then run a shell within the phone/emulator and hook our library 
+to the specified maliciuos application.
+\begin{verbatim}
+adb shell \# pentru conectat la dispozitiv Android
+su
+ps | grep ange \#to find the PID of said suspicious application (angecrypt)
+cd /data/local/tmp
+touch /data/local/tmp/ciphermon.log
+chmod 777 /data/local/tmp/ciphermon.log
+./hijack -d -p \$PID -l /data/local/tmp/libciphermon.so
+cat /data/local/tmp/ciphermon/log
+\end{verbatim}
+
+The output from the last command should contain information 
+pertaining the use of the targeted suspicious application.
+
+
+

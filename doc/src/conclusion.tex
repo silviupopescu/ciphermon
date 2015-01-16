@@ -1,3 +1,17 @@
 % vim: set tw=78 sts=2 sw=2 ts=8 aw et ai:
+Although not through a completely automated process, we 
+managed to provide a Proof-of-Concept setting for succesfully 
+detecting whether a suspicious application encodes/decodes 
+malicious information to be used on our phone and stopping
+that application from executing its task.
 
-TODO
+Amongst our future work, an automation of the hooking 
+process by using the Zygote, the Android daemon process 
+that is responsible for launching new applications, to bypass 
+manual hooking and the removal of the need for root access 
+of the phone are two of the main focusing points of our development.
+
+We also want to extend the current application to monitor not 
+only one application but every application that is newly installed
+ by the user as well as any combination of possibly encode/decode
+ file formats to increase awareness regarding malicious aplications.
