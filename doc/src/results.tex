@@ -13,11 +13,11 @@ Android SDK as well as an Android NDK.
 
 One would also need the sources of \emph{ADBI}\footnote{\url{https://github.com/crmulliner/adbi}}
 and \emph{DDI}\footnote{\url{https://github.com/crmulliner/ddi}} 
-projects developed by \cite{ddi}. In order to use our hook instead of the 
+projects developed by Collin Mulliner \cite{ddi}. In order to use our hook instead of the 
 examples provided in DDI, our project\footnote{\url{https://github.com/silviupopescu/ciphermon/blob/master/jni/mon.c}} sources have to be dumped in the ddi/examples folder.
 
 Last but not least the suspicious application is required. That can be 
-found on Github as well under the name emph{angeapk}
+found on Github as well under the name \emph{angeapk}
 \footnote{\url{https://github.com/cryptax/angeapk/tree/master/wrapping-apk/src/com/fortiguard/poc/angecrypt}}
 
 \subsection{PoC Reproduction}
@@ -41,8 +41,8 @@ cd instruments/base/jni
 ndk-build
 cd ../../../..
 \end{verbatim}
-Next, we will compile the libraries needed for the dalvik machine. We 
-need to be in the DDI folder.
+Next, we will compile the libraries needed for the Dalvik virtual machine
+interaction. We need to be in the DDI folder.
 \begin{verbatim}
 cd ddi/dalvikhook/jni/libs
 adb pull /system/lib/libdl.so
@@ -69,13 +69,13 @@ adb push ../libs/armeabi/libciphermon.so /data/local/tmp
 and then run a shell within the phone/emulator and hook our library 
 to the specified maliciuos application.
 \begin{verbatim}
-adb shell \# pentru conectat la dispozitiv Android
+adb shell
 su
-ps | grep ange \#to find the PID of said suspicious application (angecrypt)
+ps | grep angecrypt \#to find the PID of said suspicious application
 cd /data/local/tmp
 touch /data/local/tmp/ciphermon.log
 chmod 777 /data/local/tmp/ciphermon.log
-./hijack -d -p \$PID -l /data/local/tmp/libciphermon.so
+./hijack -d -p $PID -l /data/local/tmp/libciphermon.so
 cat /data/local/tmp/ciphermon/log
 \end{verbatim}
 
